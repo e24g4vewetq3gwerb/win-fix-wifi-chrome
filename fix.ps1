@@ -44,9 +44,11 @@ if (-not (Test-Connection 8.8.8.8 -Count 2 -Quiet)) {
 }
 
 Set-DnsClientServerAddress -InterfaceAlias 'Wi-Fi' -ServerAddresses 8.8.8.8,1.1.1.1 -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Downloads" | Out-Null
 $ProgressPreference = 'SilentlyContinue'
+$msi = "$env:USERPROFILE\Downloads\Chrome64.msi"
 Write-Host 'Downloading Chrome...'
-Invoke-WebRequest -Uri "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi" -OutFile "$env:TEMP\chrome.msi"
+Invoke-WebRequest 'https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi' -OutFile $msi -UseBasicParsing
 Write-Host 'Installing Chrome...'
-msiexec /i "$env:TEMP\chrome.msi" /qn
+Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /qn" -Wait
 Write-Host 'Done. Open Chrome from the Start menu.'
